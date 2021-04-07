@@ -66,7 +66,7 @@ plt.scatter(X[:, 0], X[:, 1], c=labels, s=50, cmap='viridis')
 
 事实上在GMM算法中，有一个隐含的概率模型。可以通过其得到簇分配结果的概率。打印前十个点分别属于四个类的概率。
 
-```text
+```python3
 probs = gmm.predict_proba(X)
 print(probs[:10].round(2))
 ```
@@ -75,7 +75,7 @@ print(probs[:10].round(2))
 
 因为GMM模型并不是通过硬截断进行分割类别，而是通过高斯平滑模型进行估计的。所以将每个点的概率进行可视化时，散点图并不是严格成椭圆形状的。
 
-```text
+```python3
 size = probs.max(1)
 plt.scatter(X[:, 0], X[:, 1], c=labels, cmap='viridis', s=size)
 ```
@@ -84,7 +84,7 @@ plt.scatter(X[:, 0], X[:, 1], c=labels, cmap='viridis', s=size)
 
 如果允许使用全部的协方差类型，则可以拟合任意形状的分布。为了更好的展示GMM模型的拟合结果，首先需要构造一个画椭圆的函数。在网上找到的代码因为一些API有改动，重新更新了一版。
 
-```text
+```python3
 from matplotlib.patches import Ellipse
 
 #给定的位置和协方差画一个椭圆
@@ -119,7 +119,7 @@ def plot_gmm(gmm, X, label=True, ax=None):
 
 下面使用椭圆形来拟合数据。
 
-```text
+```python3
 rng = np.random.RandomState(13)
 X_stretched = np.dot(X, rng.randn(2, 2))
 gmm = GMM(n_components=4, covariance_type='full', random_state=42)
@@ -132,7 +132,7 @@ plot_gmm(gmm, X_stretched)
 
 下面考虑一个特殊的分布形式。如下图所示
 
-```text
+```python3
 from sklearn.datasets import make_moonsXmoon, y
 moon = make_moons(100, noise=.04, random_state=0)
 plt.scatter(Xmoon[:, 0], Xmoon[:, 1]);
@@ -142,7 +142,7 @@ plt.scatter(Xmoon[:, 0], Xmoon[:, 1]);
 
 如果使用两个高斯分布进行拟合，则得到的结果如下。
 
-```text
+```python3
 gmm2 = GMM(n_components=2, covariance_type='full', random_state=0)
 plot_gmm(gmm2, Xmoon)
 ```
@@ -151,7 +151,7 @@ plot_gmm(gmm2, Xmoon)
 
 即使是椭圆形状，仍有一部分点被错误的归类为另一个分布。这时，如果使用更多的高斯分布进行归纳，则可以得到更好的效果。
 
-```text
+```python3
 gmm10 = GMM(n_components=10, covariance_type='full', random_state=0)
 plot_gmm(gmm10, Xmoon, label=False)
 ```
@@ -162,7 +162,7 @@ plot_gmm(gmm10, Xmoon, label=False)
 
 因此可以使用前面10个高斯分布集成的生成模型，来生成服从当前分布形式的200个新的样本。
 
-```text
+```python3
 Xnew = gmm10.sample(200)[0]
 plt.scatter(Xnew[:, 0], Xnew[:, 1])
 ```
@@ -203,7 +203,7 @@ $$
 
 （3）AIC和BIC的比较
 
-```text
+```python3
 n_components = np.arange(1, 21)
 models = [GMM(n, covariance_type='full', random_state=0).fit(Xmoon)
           for n in n_components]
