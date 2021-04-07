@@ -48,7 +48,7 @@ labels = gmm.predict(X)
 plt.scatter(X[:, 0], X[:, 1], c=labels, s=50, cmap='viridis')
 ```
 
-![img](D:\develop\github\MLStudy\Supervised Learning\ScoreCard\img\GMM1.jpg)
+![img](./img/GMM1.jpg)
 
 它使用EM算法进行迭代：
 
@@ -71,7 +71,7 @@ probs = gmm.predict_proba(X)
 print(probs[:10].round(2))
 ```
 
-![img](D:\develop\github\MLStudy\Supervised Learning\ScoreCard\img\GMM2.jpg)
+![img](./img/GMM2.jpg)
 
 因为GMM模型并不是通过硬截断进行分割类别，而是通过高斯平滑模型进行估计的。所以将每个点的概率进行可视化时，散点图并不是严格成椭圆形状的。
 
@@ -80,7 +80,7 @@ size = probs.max(1)
 plt.scatter(X[:, 0], X[:, 1], c=labels, cmap='viridis', s=size)
 ```
 
-![img](D:\develop\github\MLStudy\Supervised Learning\ScoreCard\img\GMM3.jpg)
+![img](./img/GMM3.jpg)
 
 如果允许使用全部的协方差类型，则可以拟合任意形状的分布。为了更好的展示GMM模型的拟合结果，首先需要构造一个画椭圆的函数。在网上找到的代码因为一些API有改动，重新更新了一版。
 
@@ -126,7 +126,7 @@ gmm = GMM(n_components=4, covariance_type='full', random_state=42)
 plot_gmm(gmm, X_stretched)
 ```
 
-![img](D:\develop\github\MLStudy\Supervised Learning\ScoreCard\img\GMM4.jpg)
+![img](./img/GMM4.jpg)
 
 **1.2.4 GMM模型的组件**
 
@@ -138,7 +138,7 @@ moon = make_moons(100, noise=.04, random_state=0)
 plt.scatter(Xmoon[:, 0], Xmoon[:, 1]);
 ```
 
-![img](D:\develop\github\MLStudy\Supervised Learning\ScoreCard\img\GMM5.jpg)
+![img](./img/GMM5.jpg)
 
 如果使用两个高斯分布进行拟合，则得到的结果如下。
 
@@ -147,7 +147,7 @@ gmm2 = GMM(n_components=2, covariance_type='full', random_state=0)
 plot_gmm(gmm2, Xmoon)
 ```
 
-![img](D:\develop\github\MLStudy\Supervised Learning\ScoreCard\img\GMM6.jpg)
+![img](./img/GMM6.jpg)
 
 即使是椭圆形状，仍有一部分点被错误的归类为另一个分布。这时，如果使用更多的高斯分布进行归纳，则可以得到更好的效果。
 
@@ -156,7 +156,7 @@ gmm10 = GMM(n_components=10, covariance_type='full', random_state=0)
 plot_gmm(gmm10, Xmoon, label=False)
 ```
 
-![img](D:\develop\github\MLStudy\Supervised Learning\ScoreCard\img\GMM7.jpg)
+![img](./img/GMM7.jpg)
 
 这里使用了10个高斯分布。但是并不是为了得到10个聚类结果。而是通过10个分布进行集成得到最终的归纳结果。也就是说，GMM模型的本质并不是聚类，而是得到一个，能够生成当前样本形式的分布。
 
@@ -167,7 +167,7 @@ Xnew = gmm10.sample(200)[0]
 plt.scatter(Xnew[:, 0], Xnew[:, 1])
 ```
 
-![img](D:\develop\github\MLStudy\Supervised Learning\ScoreCard\img\GMM8.jpg)
+![img](./img/GMM8.jpg)
 
 **1.2.5 最优组件个数的确定**
 
@@ -214,7 +214,7 @@ plt.legend(loc='best')
 plt.xlabel('n_components')
 ```
 
-![img](D:\develop\github\MLStudy\Supervised Learning\ScoreCard\img\GMM9.jpg)
+![img](./img/GMM9.jpg)
 
 最佳的聚类数目是使得AIC或BIC最小化的值，具体取决于我们希望使用的近似值。上图可以看出，AIC显示，选择10个高斯分布差不多就是最优解了。而BIC则倾向于使用更简单的模型，在6个高斯分布时即达到最优解。
 
@@ -257,7 +257,7 @@ GMM模型因其优秀的聚类表现，以及可以生产样本的强大功能�
 
 由于我们无法获知真实的条件概率，通常用观测样本的标签来统计代替，并用**可靠性曲线图**（Reliability Curve Diagrams）来直观展示当前模型的输出结果与真实结果有多大偏差。如图1所示，如果数据点几乎都落在对角线上，那么说明模型被校准得很好；反之，如果和对角线的偏离程度越明显，则校准越差。
 
-![img](D:\develop\github\MLStudy\Supervised Learning\ScoreCard\img\GMM10.jpg)
+![img](./img/GMM10.jpg)
 
 <center>图 1 - 校准曲线（横坐标 = 预测概率，纵坐标 = 实际频率）</center>
 
@@ -301,7 +301,7 @@ $$
 2. 不同评分卡输出的分数并不具有可比性，它们的分布存在差异。为了融合后统一输出一个最终分数。
 3. 各分群评分卡相当于一个分段函数，分数之间存在跃变。校准可以保证各分数具有连续性。
 
-![img](D:\develop\github\MLStudy\Supervised Learning\ScoreCard\img\calibration1.jpg)
+![img](./img/calibration1.jpg)
 
 <center>图 2 - 分群评分卡场景
 
@@ -311,7 +311,7 @@ $$
 
 同时，为了使下游业务调用无感知，我们会将主用备用模型的分数校准至一个尺度。这样就能保证风控策略同学只需要制订一套cutoff方案，且不用调整，只需做必要的**策略切换日志**和**前后波动监控**即可。
 
-![img](D:\develop\github\MLStudy\Supervised Learning\ScoreCard\img\calibration2.jpg)
+![img](./img/calibration2.jpg)
 
 <center>图 3 - 降级备用策略</center>
 
@@ -321,7 +321,7 @@ $$
 
 然而考虑到建模成本，我们有时并不想refit模型，此时就可以利用最近样本对评分卡进行校准，修正偏差。
 
-![img](D:\develop\github\MLStudy\Supervised Learning\ScoreCard\img\calibration3.jpg)
+![img](./img/calibration3.jpg)
 
 <center>图 4 - 基于近期样本校准
 
@@ -344,7 +344,7 @@ $$
 
 假设目前有一个LR模型分数score1，并令score2 = 0.75*score1，以此来模拟场景1和2。此时score1和score2的排序性完全一致，只是绝对值不同，对应不同的风险等级，如图5所示。我们需要将score1和score2校准到同一尺度。
 
-![img](D:\develop\github\MLStudy\Supervised Learning\ScoreCard\img\calibration4.jpg)
+![img](./img/calibration4.jpg)
 
 <center>图 5 - 两个分支模型的概率分布
 
@@ -357,7 +357,7 @@ $$
 
 我们把score1和score2分别执行step 3，得到校准后的分数score1_cal和score2_cal，如图6所示。通过分布可知，两个分数的**差异几乎为0**，故而具有相同的风险等级。同时，由于校准函数是单调的，那么校准前后将不会影响排序性和区分度。
 
-![img](D:\develop\github\MLStudy\Supervised Learning\ScoreCard\img\calibration5.jpg)
+![img](./img/calibration5.jpg)
 
 <center>图 6 - 校准后的两个分支模型的概率分布
 
@@ -365,7 +365,7 @@ $$
 
 场景3一般称为评分卡分数的错误分配（Misassignment），如图7所示。
 
-![img](D:\develop\github\MLStudy\Supervised Learning\ScoreCard\img\calibration6.jpg)
+![img](./img/calibration6.jpg)
 
 <center>图 7 - 截距错配(Intercept Misalignment)
 
@@ -383,7 +383,7 @@ $$
 
 在图8中，实际上该产品的整体违约率只有**2%**左右，而评分卡开发样本的违约率为**10%**。因此可以通过这种方式对每个分数区间的Odds予以校准。
 
-![img](D:\develop\github\MLStudy\Supervised Learning\ScoreCard\img\calibration7.jpg)
+![img](./img/calibration7.jpg)
 
 <center>图 8 - 基于Odds的评分卡校准
 
@@ -408,7 +408,7 @@ $$
 
 这是非常有用的，因为从业务上很难理解一个概率分代表的含义，但人们对于整数分更容易接受。比如，温度计上的刻度 ️。单调性保证了映射过程不会改变分数的排序性。
 
-![img](D:\develop\github\MLStudy\Supervised Learning\ScoreCard\img\calibration8.jpg)
+![img](./img/calibration8.jpg)
 
 <center>图 9 - 评分卡赋分
 
